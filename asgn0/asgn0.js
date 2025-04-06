@@ -86,6 +86,22 @@ function handleDrawOperationEvent(){
                 drawVector(v1, 'green');
                 drawVector(v2, 'green');
                 break;
+            case "Angle between":
+                var dotProduct = Vector3.dot(v1, v2);
+                var magnitudes = v1.magnitude() * v2.magnitude();   
+                if (magnitudes === 0) {
+                    console.log("Cannot compute angle: One of the vectors has zero magnitude.");
+                    break;
+                }     
+                var alpha = Math.acos(dotProduct / magnitudes);
+                if (isNaN(alpha)) {
+                    alpha = Math.PI / 2;
+                }
+                console.log("Angle:", alpha * (180 / Math.PI));
+                break;
+            case "Area":
+                console.log("Area:", Vector3.cross(v1,v2).magnitude()/2);
+                break;
         }
     }
     v1.set(oldv1);
