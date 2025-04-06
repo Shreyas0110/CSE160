@@ -34,12 +34,13 @@ function handleDrawEvent(){
     clear();
     drawVector(v1, 'red');
     drawVector(v2, 'blue');
+    return true;
 }
 
 function handleDrawOperationEvent(){
-    clear();
-    drawVector(v1, 'red');
-    drawVector(v2, 'blue');
+    if(!handleDrawEvent()){
+        return;
+    }
     let oldv1 = new Vector3();
     let oldv2 = new Vector3();
     oldv1.set(v1);
