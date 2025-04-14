@@ -3,7 +3,7 @@ class Shape{
         this.type = '';
         this.position = position;
         this.color = color;
-        this.size = size;
+        this.size = size; 
     }
 
     render(){};
@@ -67,13 +67,13 @@ class Circle extends Shape{
     constructor(position, color, size, segments){
         super(position, color, size);
         this.segments = segments;
-        this.type = 'triangle';
+        this.type = 'circle';
     }
 
     render(){
         gl.uniform4f(u_FragColor, this.color[0], this.color[1], this.color[2], this.color[3]);
 
-        var d = this.size/200.0;
+        var d = this.size/400.0;
         var xy = this.position;
 
         let angleStep = 360/this.segments;

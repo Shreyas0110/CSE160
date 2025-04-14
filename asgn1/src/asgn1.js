@@ -98,20 +98,23 @@ let color = [1.0,1.0,1.0,1.0];
 let g_size = 10;
 let selectedType = POINT;
 let circle_segments = 10;
+let selectActive = false;
+let hasSelected = false;
+let selectedShape;
 
 function addActionfromUI(){
-  document.getElementById("redSlide").addEventListener('mouseup', function() {color[0] = this.value/100;});
-  document.getElementById("greenSlide").addEventListener('mouseup', function() {color[1] = this.value/100;});
-  document.getElementById("blueSlide").addEventListener('mouseup', function() {color[2] = this.value/100;});
-  document.getElementById("sizeSlide").addEventListener('mouseup', function() {g_size = this.value;});
-  document.getElementById("clearButton").addEventListener('mouseup', function() {shapes_array = []; renderAllShapes();});
+  document.getElementById("redSlide").addEventListener('mouseup', function() {color[0] = this.value/100; if(hasSelected) {selectedShape.color[0] = this.value/100; renderAllShapes();}});
+  document.getElementById("greenSlide").addEventListener('mouseup', function() {color[1] = this.value/100; if(hasSelected) {selectedShape.color[1] = this.value/100; renderAllShapes();}});
+  document.getElementById("blueSlide").addEventListener('mouseup', function() {color[2] = this.value/100; if(hasSelected) {selectedShape.color[2] = this.value/100; renderAllShapes();}});
+  document.getElementById("sizeSlide").addEventListener('mouseup', function() {g_size = this.value;if(hasSelected){selectedShape.size = this.value; renderAllShapes();}});
+  document.getElementById("clearButton").addEventListener('mouseup', function() {hasSelected = false; shapes_array = []; renderAllShapes();});
   document.getElementById("drawing").addEventListener('mouseup', function() {shapes_array = []; shapes_array = drawingArray.slice(); renderAllShapes();});
-  document.getElementById("segmentSlide").addEventListener('mouseup', function() {circle_segments = this.value;});
-
+  document.getElementById("segmentSlide").addEventListener('mouseup', function() {circle_segments = this.value;if(hasSelected && selectedShape.type=='circle') {selectedShape.segments = this.value; renderAllShapes();}});
+  document.getElementById("select").addEventListener('mouseup', function() {selectActive = true; sendTextToHTML("Select active", "swrite");});
+  document.getElementById("selectdisable").addEventListener('mouseup', function() {selectActive = false; sendTextToHTML("Select disabled", "swrite"); selectedShape = false; hasSelected = false});
   document.getElementById("point").addEventListener('mouseup', function() {selectedType = POINT;});
   document.getElementById("triangle").addEventListener('mouseup', function() {selectedType = TRIANGLE;});
   document.getElementById("circle").addEventListener('mouseup', function() {selectedType = CIRCLE;});
-
 }
 
 var g_points = [];  // The array for the position of a mouse press
@@ -120,22 +123,49 @@ var g_sizes = [];
 var shapes_array = [];
 
 function click(ev) {
- 
   [x,y] = convertCoordinatesToWebGL(ev);
-  var elem;
-  switch(selectedType){
-    case POINT:
-      elem = new Point([x,y], color.slice(), g_size);
-      break;
-    case TRIANGLE:
-      elem = new Triangle([x,y], color.slice(), g_size);
-      break;
-    case CIRCLE:
-      elem = new Circle([x,y], color.slice(), g_size, circle_segments);
+  if(!selectActive){
+    var elem;
+    switch(selectedType){
+      case POINT:
+        elem = new Point([x,y], color.slice(), g_size);
+        break;
+      case TRIANGLE:
+        elem = new Triangle([x,y], color.slice(), g_size);
+        break;
+      case CIRCLE:
+        elem = new Circle([x,y], color.slice(), g_size, circle_segments);
+    }
+    shapes_array.push(elem);
+  
+    renderAllShapes();
   }
-  shapes_array.push(elem);
-
-  renderAllShapes();
+  else{
+    if(!hasSelected){
+      for(let i = shapes_array.length-1; i >=0; --i){
+        var shape = shapes_array[i];
+        if(shape.type != 'triangle'){
+          let d = shape.size/400.0
+          if((x <= shape.position[0]+ d && x >= shape.position[0]-d) && (y <= shape.position[1]+ d && y >= shape.position[1]-d)){
+            hasSelected = true;
+            selectedShape = shape;
+            break;
+          }
+        } else{
+          let d = shape.size/200.0
+          if((x <= shape.position[0]+ d && x >= shape.position[0]) && (y <= shape.position[1]+ d && y >= shape.position[1])){
+            hasSelected = true;
+            selectedShape = shape;
+            break;
+          }
+        }
+      }
+    }
+    else{
+      selectedShape.position = [x,y];
+    }
+    renderAllShapes();
+  }
 }
 
 function renderAllShapes(){
