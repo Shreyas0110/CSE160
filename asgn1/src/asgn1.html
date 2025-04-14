@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Assignment 1</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <p id="numdot">numdot: 0 ms: n/a fps: n/a</p>
+    <button type="button" id="clearButton">Clear Canvas</button>  
+    <p>
+      <button type="button" id="point">Points</button>  
+      <button type="button" id="triangle">Triangles</button>
+      <button type="button" id="circle">Circles</button>
+    <p>
+      Red <input type="range" min="0" max="100" value="100" class="slider" id="redSlide">
+      Green <input type="range" min="0" max="100" value="100" class="slider" id="greenSlide">
+      Blue <input type="range" min="0" max="100" value="100" class="slider" id="blueSlide">
+    <p>
+      Shape Size <input type="range" min="5" max="100" value="10" class="slider" id="sizeSlide">
+      (Circles) Segment Count: <input type="range" min="3" max="30" value="10" class="slider" id="segmentSlide">
+    <p>
+      <button type="button" id="drawing">Draw Picture</button>  
+    </p>
+    Here is my reference Image
+    <p></p>
+    <img src="bat.png" alt="image">
+
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="asgn1.js"></script>
+    <script src="Shapes.js"></script>
+    <script src="drawing.js"></script>
+  </body>
+</html>
