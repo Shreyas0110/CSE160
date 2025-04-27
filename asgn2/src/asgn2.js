@@ -146,14 +146,12 @@ function main() {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  floor = new FunkyCylinder(100);
-  floor.addLayer([0,0], 0, 100);
-  floor.addLayer([0,0], 0.2, 220);
-  floor.addPoint([0,0], 0);
-  floor.initNormals();
+  floor = new MasterFloor();
+  let mainfloor = new FloorInstance();
+  
 
-  //instanceList.push(new InstanceHandler(floor));
-  instanceList.push(new InstanceHandler(new Cube()));
+  instanceList.push(new InstanceHandler(floor, [mainfloor]));
+  //instanceList.push(new InstanceHandler(new Cube()));
 
   requestAnimationFrame(tick);
 

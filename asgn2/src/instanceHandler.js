@@ -1,14 +1,22 @@
 class InstanceHandler{
-    constructor(object){
-        this.createVAO(object);
-        this.object = object;
-        this.numInstances = 1;
+    constructor(base, instances){
+        this.createVAO(base, instances);
+        this.object = base;
+        this.numInstances = instances.length;
+        this.instances = instances;
+        this.matrixData = new Float32Array(16*this.numInstances);
     }
 
-    createVAO(object){
+    createVAO(object, instances){
         let vertices = object.getVertices();
-        let color = object.color;
         let normals = object.normals;
+        let matrices = [];
+        let colors = []
+
+        for (let instance of instances){
+            matrices.push(...instance.ModelMatrix.elements);
+            colors.push(...instance.color);
+        }
       
         const vao = gl.createVertexArray();
         gl.bindVertexArray(vao);
@@ -28,7 +36,7 @@ class InstanceHandler{
       
         const modelMatrixBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, modelMatrixBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, eye.elements, gl.DYNAMIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(matrices), gl.DYNAMIC_DRAW);
       
         for (let i = 0; i < 4; ++i) {
           const loc = a_ModelMatrix + i;
@@ -39,7 +47,7 @@ class InstanceHandler{
       
         const fragBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, fragBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.DYNAMIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
       
         gl.vertexAttribPointer(a_FragColor, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(a_FragColor);
@@ -51,16 +59,17 @@ class InstanceHandler{
     }
 
     renderInstance(){
-        this.setModelMatrix();
+        let offset = 0;
+        for(let instance of this.instances){
+            instance.setModelMatrix(this.matrixData, offset);
+            offset += 64;
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.modelMatrixBuffer);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.matrixData);
+
         gl.bindVertexArray(this.vao);
       
         gl.drawArraysInstanced(gl.TRIANGLES, 0, this.length/3, this.numInstances);
     }
 
-    setModelMatrix(){
-        let m = new Matrix4();
-        m.rotate(90*Math.sin(g_seconds), 1, 0, 0);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.modelMatrixBuffer);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, m.elements);
-    }
 }

@@ -11,7 +11,7 @@ class FunkyCylinder{
     }
 
     addLayer(center, height_increase, size){
-        this.numLayers++;
+        
         let currentLayer = [];
         this.height += height_increase;
 
@@ -32,8 +32,8 @@ class FunkyCylinder{
         if(this.previousLayer != null){
             //Was a point
             if(this.previousLayer.length == 1){
-                for(let i = 0; i < this.previousLayer.length; ++i){
-                    this.vertices.push(...this.previousLayer[0], ...currentLayer[i][0], ...currentLayer[i][1]);
+                for(let i = 0; i < currentLayer.length; ++i){
+                    this.vertices.push(...this.previousLayer[0],...currentLayer[i][1], ...currentLayer[i][0]);
                 }
             }
             else{
@@ -50,6 +50,7 @@ class FunkyCylinder{
 
         }
         this.previousLayer = currentLayer;
+        this.numLayers++;
     }
 
     addPoint(loc, height_increase){
