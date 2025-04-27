@@ -4,20 +4,33 @@
 var VSHADER_SOURCE = `
   attribute vec4 a_Position;
   attribute mat4 a_ModelMatrix;
+
   attribute vec4 a_FragColor;
   varying vec4 v_FragColor;
+  attribute vec3 a_Normal;
+  varying vec3 v_Normal;
+
   uniform mat4 u_ViewMatrix;
   void main() {
     gl_Position = u_ViewMatrix * a_ModelMatrix * a_Position;
     v_FragColor = a_FragColor;
+    v_Normal = mat3(a_ModelMatrix) * a_Normal;
   }`;
 
 // Fragment shader program
 var FSHADER_SOURCE = `
   precision mediump float;
   varying vec4 v_FragColor;
+  varying vec3 v_Normal;
+  uniform vec3 u_reverseLightDirection;
   void main() {
     gl_FragColor = v_FragColor;
+
+    vec3 normal = normalize(v_Normal);
+ 
+    float light = dot(normal, u_reverseLightDirection);
+  
+    gl_FragColor.rgb *= max(light, 0.4);
   }`;
 
 let canvas;
@@ -26,6 +39,10 @@ let a_Position;
 let a_FragColor;
 let a_ModelMatrix;
 let u_ViewMatrix;
+let a_Normal;
+let u_reverseLightDirection;
+let ViewMatrix;
+let eye = new Matrix4();
 
 function setupWebGL(){
   canvas = document.getElementById('webgl');
@@ -36,8 +53,7 @@ function setupWebGL(){
     console.log('Failed to get the rendering context for WebGL');
     return;
   }
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.DEPTH_TEST); 
 }
 
 function connectVariablesToGLSL(){
@@ -72,7 +88,52 @@ function connectVariablesToGLSL(){
     console.log('Failed to get the storage location of u_ViewMatrix');
     return;
   }
+
+  u_reverseLightDirection = gl.getUniformLocation(gl.program, 'u_reverseLightDirection');
+  if (!u_reverseLightDirection) {
+    console.log('Failed to get the storage location of u_reverseLightDirection');
+    return;
+  }
+
+  a_Normal = gl.getAttribLocation(gl.program, 'a_Normal');
+  if (!a_ModelMatrix) {
+    console.log('Failed to get the storage location of a_Normal');
+    return;
+  }
 }
+
+let light = (new Vector3([0.5, 0.7, 1])).normalize().elements
+
+function render(){
+
+  gl.uniformMatrix4fv(u_ViewMatrix, false, eye.elements);
+  gl.uniform3fv(u_reverseLightDirection, light);
+
+  gl.useProgram(gl.program);
+
+  for(let i = 0; i < instanceList.length; ++i){
+    instanceList[i].renderInstance();
+  }
+
+}
+
+function tick(){
+  var startTime = performance.now();
+  g_seconds = startTime/1000.0 - g_startTime;
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  render();
+
+  var duration = performance.now() - startTime;
+  sendTextToHTML(" ms: " + Math.floor(duration) + " fps: "+ Math.floor(100000/duration), "numdot");
+
+  requestAnimationFrame(tick);
+}
+
+var floor;
+var instanceList = [];
+var g_startTime = performance.now()/1000.0;
+var g_seconds;
 
 function main() {
 
@@ -85,51 +146,17 @@ function main() {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  let floor = new FunkyCylinder(100);
+  floor = new FunkyCylinder(100);
   floor.addLayer([0,0], 0, 100);
   floor.addLayer([0,0], 0.2, 220);
   floor.addPoint([0,0], 0);
-  
-  let vertices = floor.getVertices();
-  let color = floor.getColors();
-  let eye = new Matrix4();
+  floor.initNormals();
 
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
+  //instanceList.push(new InstanceHandler(floor));
+  instanceList.push(new InstanceHandler(new Cube()));
 
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  requestAnimationFrame(tick);
 
-  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(a_Position);
-
-  const modelMatrixBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, modelMatrixBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, eye.elements, gl.DYNAMIC_DRAW);
-
-  for (let i = 0; i < 4; ++i) {
-    const loc = a_ModelMatrix + i;
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 64, i * 16);
-    gl.vertexAttribDivisor(loc, 1);
-  }
-
-  const fragBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, fragBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.DYNAMIC_DRAW);
-
-  gl.vertexAttribPointer(a_FragColor, 4, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(a_FragColor);
-
-  gl.uniformMatrix4fv(u_ViewMatrix, false, eye.elements);
-
-  gl.vertexAttribDivisor(a_ModelMatrix, 1);
-
-  gl.useProgram(gl.program);
-  gl.bindVertexArray(vao);
-
-  gl.drawArraysInstanced(gl.TRIANGLES, 0, vertices.length/3, 1);
 }
 
 function convertCoordinatesToWebGL(ev){
@@ -141,4 +168,12 @@ function convertCoordinatesToWebGL(ev){
   y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
 
   return [x,y];
+}
+
+function sendTextToHTML(text, htmlID){
+  var htmlElm = document.getElementById(htmlID);
+  if(!htmlElm){
+    console.log("Failed to get " + htmlID);
+  }
+  htmlElm.innerHTML = text;
 }
