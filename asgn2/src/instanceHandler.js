@@ -14,7 +14,7 @@ class InstanceHandler{
         let colors = []
 
         for (let instance of instances){
-            matrices.push(...instance.ModelMatrix.elements);
+            matrices.push(...instance.tempMatrix.elements);
             colors.push(...instance.color);
         }
       
@@ -56,14 +56,17 @@ class InstanceHandler{
         this.vao = vao;
         this.modelMatrixBuffer = modelMatrixBuffer;
         this.length = vertices.length;
+
     }
 
     renderInstance(){
         let offset = 0;
         for(let instance of this.instances){
             instance.setModelMatrix(this.matrixData, offset);
-            offset += 64;
+            offset += 16;
         }
+
+        //console.log(this.matrixData);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.modelMatrixBuffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.matrixData);
 

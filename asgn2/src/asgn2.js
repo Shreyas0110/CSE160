@@ -41,8 +41,8 @@ let a_ModelMatrix;
 let u_ViewMatrix;
 let a_Normal;
 let u_reverseLightDirection;
-let ViewMatrix;
 let eye = new Matrix4();
+let ViewMatrix = new Matrix4(eye);
 
 function setupWebGL(){
   canvas = document.getElementById('webgl');
@@ -106,7 +106,7 @@ let light = (new Vector3([0.5, 0.7, 1])).normalize().elements
 
 function render(){
 
-  gl.uniformMatrix4fv(u_ViewMatrix, false, eye.elements);
+  gl.uniformMatrix4fv(u_ViewMatrix, false, ViewMatrix.elements);
   gl.uniform3fv(u_reverseLightDirection, light);
 
   gl.useProgram(gl.program);
@@ -133,7 +133,7 @@ function tick(){
 var floor;
 var instanceList = [];
 var g_startTime = performance.now()/1000.0;
-var g_seconds;
+var g_seconds = performance.now()/1000.0 - g_startTime;
 
 function main() {
 
@@ -147,10 +147,11 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   floor = new MasterFloor();
-  let mainfloor = new FloorInstance();
+  let mainfloor = new FloorInstance(eye, [0.75, 0.75, 0.75, 1], undefined, [0.1, 0.1, 0], [0.5, 0.5, 0.5], [0, 0, 45]);
+  let floor2 = new FloorInstance(mainfloor.tempMatrix, [0, 0.75, 0.75, 1], [0, -0.3, 0], [0.1, 0.1, 0]);
   
 
-  instanceList.push(new InstanceHandler(floor, [mainfloor]));
+  instanceList.push(new InstanceHandler(floor, [mainfloor, floor2]));
   //instanceList.push(new InstanceHandler(new Cube()));
 
   requestAnimationFrame(tick);
