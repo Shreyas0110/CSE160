@@ -105,9 +105,9 @@ function connectVariablesToGLSL(){
 
 let light = (new Vector3([0.5, 0.7, 1])).normalize().elements;
 viewLocX = 0;
-viewLocY = -40;
-viewLocZ = -140;
-viewAngleX = 5;
+viewLocY = -60;
+viewLocZ = -600;
+viewAngleX = 20;
 viewAngleZ = 0;
 viewAngleY = 0
 
@@ -143,7 +143,7 @@ function tick(){
   render();
 
   var duration = performance.now() - startTime;
-  sendTextToHTML(" ms: " + Math.floor(duration) + " fps: "+ Math.floor(100000/duration), "numdot");
+  sendTextToHTML(" ms: " + Math.floor(duration) + " fps: "+ Math.floor(1000/duration), "numdot");
 
   requestAnimationFrame(tick);
 }
@@ -160,7 +160,7 @@ function main() {
   connectVariablesToGLSL();
   addActionfromUI();
   // Specify the color for clearing <canvas>
-  ViewMatrixBase = new Matrix4().setPerspective(60, canvas.clientWidth / canvas.clientHeight, 1, 2000);
+  ViewMatrixBase = new Matrix4().setPerspective(60, canvas.clientWidth / canvas.clientHeight, 1, 4000);
   gl.clearColor(173/255.0, 216/255.0, 230/255.0, 1.0);
 
   // Clear <canvas>
@@ -174,14 +174,41 @@ function main() {
   let masterHead = new GoronHeadMaster();
   let masterUpperArm = new GoronUpperArmMaster();
   let masterLowerArm = new GoronLowerArmMaster();
+  let masterHorn = new GoronHornMaster();
+  let masterCylinder = new BasicCylinder();
 
-  let mainGoron = new Goron(undefined, [0, 30, 0]);
+  let gorons = [];
+
+  gorons.push(new Goron(undefined, [0, 30, 0]));
+  for (let i = 0; i < 35; i++){
+    for (let j = 0; j < 40; j++){
+      if(i == 20 && j == 0){
+        continue;
+      }
+      let r = Math.random();
+      let g = Math.random();
+      let b = Math.random();
+      let sizeSeed = Math.random();
+      let size = 1;
+      let y = 30;
+      if(sizeSeed < 0.3){
+        size = 0.5;
+        y = 30/1.5;
+      } else if (sizeSeed > 0.7){
+        size = 1.25;
+        y = 45;
+      }
+      gorons.push(new Goron([r, g, b, 1], [-1500 + 60*j, y, -60*i], [size, size, size]));
+    }
+  }
 
   instanceList.push(new InstanceHandler(floor, [mainfloor]));
-  instanceList.push(new InstanceHandler(masterBody, [mainGoron.bodyInstance]));
-  instanceList.push(new InstanceHandler(masterHead, [mainGoron.GoronHeadInstance]));
-  instanceList.push(new InstanceHandler(masterUpperArm, [...mainGoron.GoronUpperArmInstances]));
-  instanceList.push(new InstanceHandler(masterLowerArm, [...mainGoron.GoronLowerArmInstances]));
+  instanceList.push(new InstanceHandler(masterBody, gorons.map(item => item.bodyInstance)));
+  instanceList.push(new InstanceHandler(masterHead, gorons.map(item => item.GoronHeadInstance)));
+  instanceList.push(new InstanceHandler(masterUpperArm, gorons.flatMap(item => item.GoronUpperArmInstances)));
+  instanceList.push(new InstanceHandler(masterLowerArm, gorons.flatMap(item => item.GoronLowerArmInstances)));
+  instanceList.push(new InstanceHandler(masterHorn, gorons.flatMap(item => item.GoronHornInstances)));
+  instanceList.push(new InstanceHandler(masterCylinder, gorons.flatMap(item => item.cylinders)));
 
   requestAnimationFrame(tick);
 

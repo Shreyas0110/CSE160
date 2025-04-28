@@ -2,8 +2,8 @@ class MasterFloor extends FunkyCylinder{
     constructor(){
         super(500);
         this.addPoint([0,0], -10);
-        this.addLayer([0,0], 0, 500);
-        this.addLayer([0,0], 10, 500);
+        this.addLayer([0,0], 0, 5000);
+        this.addLayer([0,0], 10, 5000);
         this.addPoint([0,0], 0);
         this.initNormals();
     }
@@ -21,9 +21,9 @@ class instanceReference{
         this.translateR = translateR;
         this.translateP = translateP;
         this.scale = scale;
-        this.rx = new Matrix4();
-        this.ry = new Matrix4();
-        this.rz = new Matrix4();
+        this.dy = translateP[1];
+        this.render = true;
+        this.anim_end = 0;
     }
 
     setModelMatrix(matrixData, offset){
