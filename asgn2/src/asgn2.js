@@ -180,9 +180,9 @@ function main() {
   let gorons = [];
 
   gorons.push(new Goron(undefined, [0, 30, 0]));
-  for (let i = 0; i < 35; i++){
-    for (let j = 0; j < 40; j++){
-      if(i == 20 && j == 0){
+  for (let i = 0; i < 20; i++){
+    for (let j = 0; j < 30; j++){
+      if(i == 15 && j == 0){
         continue;
       }
       let r = Math.random();
@@ -198,7 +198,7 @@ function main() {
         size = 1.25;
         y = 45;
       }
-      gorons.push(new Goron([r, g, b, 1], [-1500 + 60*j, y, -60*i], [size, size, size]));
+      gorons.push(new Goron([r, g, b, 1], [-900 + 60*j, y, -60*i], [size, size, size]));
     }
   }
 
