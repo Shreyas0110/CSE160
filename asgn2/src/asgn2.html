@@ -6,10 +6,21 @@
   </head>
 
   <body onload="main()">
-    <canvas id="webgl" width="700" height="600">
+    <canvas id="webgl" width="700" height="700">
     Please use a browser that supports "canvas"
     </canvas>
     <p id="numdot">ms: n/a fps: n/a</p>
+
+    <p>
+      CameraAngleX <input type="range" min="0" max="360" value="5" class="slider" id="cameraAngleX">
+      CameraAngleY <input type="range" min="0" max="360" value="0" class="slider" id="cameraAngleY">
+      CameraAngleZ <input type="range" min="0" max="360" value="0" class="slider" id="cameraAngleZ">
+    <p>
+    <p>
+      CameraPosX <input type="range" min="-200" max="200" value="0" class="slider" id="cameraPosX">
+      CameraPosY <input type="range" min="-50" max="4" value="-20" class="slider" id="cameraPosY">
+      CameraPosZ <input type="range" min="-600" max="-10" value="-300" class="slider" id="cameraPosZ">
+    <p>
 
     <script src="../lib/webgl-utils.js"></script>
     <script src="../lib/webgl-debug.js"></script>
@@ -21,5 +32,7 @@
     <script src="instanceHandler.js"></script>
     <script src="Cube.js"></script>
     <script src="Objects.js"></script>
+    <script src="UI.js"></script>
+    <script src="Goron.js"></script>
   </body>
 </html>

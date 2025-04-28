@@ -15,7 +15,7 @@ class FunkyCylinder{
         let currentLayer = [];
         this.height += height_increase;
 
-        var d = size/400.0;
+        var d = size;
         var xz = center;
 
         let angleStep = 360/this.segments;

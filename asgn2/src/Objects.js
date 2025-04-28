@@ -1,8 +1,9 @@
 class MasterFloor extends FunkyCylinder{
     constructor(){
-        super(100);
-        this.addLayer([0,0], 0, 100);
-        this.addLayer([0,0], 0.2, 220);
+        super(500);
+        this.addPoint([0,0], -10);
+        this.addLayer([0,0], 0, 500);
+        this.addLayer([0,0], 10, 500);
         this.addPoint([0,0], 0);
         this.initNormals();
     }
@@ -20,15 +21,26 @@ class instanceReference{
         this.translateR = translateR;
         this.translateP = translateP;
         this.scale = scale;
+        this.rx = new Matrix4();
+        this.ry = new Matrix4();
+        this.rz = new Matrix4();
     }
 
     setModelMatrix(matrixData, offset){
         this.tempMatrix.set(this.parentMatrix);
+
+        this.animate();
+        this.translateForPosition();
+
+        this.rotate();
+        this.translateForRotation();
+        this.scaleTransform();
+/*
         this.animate();
         this.translateForRotation();
         this.rotate();
         this.scaleTransform();
-        this.translateForPosition();
+        this.translateForPosition();*/
         this.uploadData(matrixData, offset);
     }
 
@@ -47,14 +59,14 @@ class instanceReference{
     }
 
     rotate(){
-        if(this.angleX != 0){
-            this.tempMatrix.rotate(this.angleX, 1, 0, 0);
+        if(this.angleZ != 0){
+            this.tempMatrix.rotate(this.angleZ, 0, 0, 1);
         }
         if(this.angleY != 0){
             this.tempMatrix.rotate(this.angleY, 0, 1, 0);
         }
-        if(this.angleZ != 0){
-            this.tempMatrix.rotate(this.angleZ, 0, 0, 1);
+        if(this.angleX != 0){
+            this.tempMatrix.rotate(this.angleX, 1, 0, 0);
         }
     }
 
@@ -101,8 +113,5 @@ class instanceReference{
 class FloorInstance extends instanceReference{
 
     animate(){
-        let angleX = 180*Math.sin(g_seconds);
-        //this.angleY = 180*Math.sin(g_seconds);
-        this.setAngle(angleX);
     }
 }

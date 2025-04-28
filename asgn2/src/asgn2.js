@@ -14,7 +14,7 @@ var VSHADER_SOURCE = `
   void main() {
     gl_Position = u_ViewMatrix * a_ModelMatrix * a_Position;
     v_FragColor = a_FragColor;
-    v_Normal = mat3(a_ModelMatrix) * a_Normal;
+    v_Normal = mat3(u_ViewMatrix * a_ModelMatrix) * a_Normal;
   }`;
 
 // Fragment shader program
@@ -30,7 +30,7 @@ var FSHADER_SOURCE = `
  
     float light = dot(normal, u_reverseLightDirection);
   
-    gl_FragColor.rgb *= max(light, 0.4);
+    gl_FragColor.rgb *= max((light/2.0 + 0.5), 0.6);
   }`;
 
 let canvas;
@@ -42,7 +42,8 @@ let u_ViewMatrix;
 let a_Normal;
 let u_reverseLightDirection;
 let eye = new Matrix4();
-let ViewMatrix = new Matrix4(eye);
+let ViewMatrix = new Matrix4();
+let ViewMatrixBase;
 
 function setupWebGL(){
   canvas = document.getElementById('webgl');
@@ -102,10 +103,27 @@ function connectVariablesToGLSL(){
   }
 }
 
-let light = (new Vector3([0.5, 0.7, 1])).normalize().elements
+let light = (new Vector3([0.5, 0.7, 1])).normalize().elements;
+viewLocX = 0;
+viewLocY = -40;
+viewLocZ = -140;
+viewAngleX = 5;
+viewAngleZ = 0;
+viewAngleY = 0
+
+function setView(){
+  ViewMatrix.set(ViewMatrixBase);
+  ViewMatrix.translate(viewLocX, viewLocY, viewLocZ);
+  if(viewAngleX != 0)
+    ViewMatrix.rotate(viewAngleX, 1, 0, 0);
+  if(viewAngleY != 0)
+    ViewMatrix.rotate(viewAngleY, 0, 1, 0);
+  if(viewAngleZ != 0)
+    ViewMatrix.rotate(viewAngleZ, 0, 0, 1);
+}
 
 function render(){
-
+  setView();
   gl.uniformMatrix4fv(u_ViewMatrix, false, ViewMatrix.elements);
   gl.uniform3fv(u_reverseLightDirection, light);
 
@@ -140,19 +158,30 @@ function main() {
   setupWebGL();
 
   connectVariablesToGLSL();
+  addActionfromUI();
   // Specify the color for clearing <canvas>
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  ViewMatrixBase = new Matrix4().setPerspective(60, canvas.clientWidth / canvas.clientHeight, 1, 2000);
+  gl.clearColor(173/255.0, 216/255.0, 230/255.0, 1.0);
 
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   floor = new MasterFloor();
-  let mainfloor = new FloorInstance(eye, [0.75, 0.75, 0.75, 1], undefined, [0.1, 0.1, 0], [0.5, 0.5, 0.5], [0, 0, 45]);
-  let floor2 = new FloorInstance(mainfloor.tempMatrix, [0, 0.75, 0.75, 1], [0, -0.3, 0], [0.1, 0.1, 0]);
-  
+  let mainfloor = new FloorInstance(eye, [1, 1, 1, 1], undefined, [0, 0, 0]);
 
-  instanceList.push(new InstanceHandler(floor, [mainfloor, floor2]));
-  //instanceList.push(new InstanceHandler(new Cube()));
+
+  let masterBody = new GoronBodyMaster();
+  let masterHead = new GoronHeadMaster();
+  let masterUpperArm = new GoronUpperArmMaster();
+  let masterLowerArm = new GoronLowerArmMaster();
+
+  let mainGoron = new Goron(undefined, [0, 30, 0]);
+
+  instanceList.push(new InstanceHandler(floor, [mainfloor]));
+  instanceList.push(new InstanceHandler(masterBody, [mainGoron.bodyInstance]));
+  instanceList.push(new InstanceHandler(masterHead, [mainGoron.GoronHeadInstance]));
+  instanceList.push(new InstanceHandler(masterUpperArm, [...mainGoron.GoronUpperArmInstances]));
+  instanceList.push(new InstanceHandler(masterLowerArm, [...mainGoron.GoronLowerArmInstances]));
 
   requestAnimationFrame(tick);
 
