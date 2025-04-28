@@ -1,5 +1,14 @@
 goronbodycolor = [186/255.0, 148/255.0, 35/255.0, 1];
 
+const animation_status = {
+    NONE: "none",
+    WAVE: "wave",
+    WALK: "walk",
+    DANCE: "dance"
+};
+
+let anim = animation_status.WALK;
+
 class Goron{
     constructor(color = goronbodycolor, location = [0,0,0], scale = [1, 1, 1]){
         this.location = new Vector3(location);
@@ -21,12 +30,12 @@ class Goron{
         //UPPER ARMS
         this.GoronUpperArmInstances.push(new GoronUpperArmInstance(
             this.bodyInstance.tempMatrix, color, undefined,
-            [-17, 40, 0], [1.1, 1.1, 1.3], [0, 0, 135]
+            [-16, 40, 0], [1.1, 1.1, 1.3], [0, 0, 135]
         ));
 
         this.GoronUpperArmInstances.push(new GoronUpperArmInstance(
             this.bodyInstance.tempMatrix, color, undefined,
-            [17, 40, 0], [1.1, 1.1, 1.3], [0, 0, -135]
+            [16, 40, 0], [1.1, 1.1, 1.3], [0, 0, -135]
         ));
 
         //UPPER LEGS
@@ -59,6 +68,8 @@ class Goron{
             this.GoronUpperArmInstances[3].tempMatrix, color, undefined,
             [0, 13, 0], [1, 0.7, 1], [0, 0, 0]
         ));
+
+        anim = animation_status.WALK;
     }
 }
 
@@ -86,8 +97,15 @@ class GoronBodyMaster extends FunkyCylinder{
 
 class GoronBodyInstance extends instanceReference{
     animate(){
-        let angleX = 25*Math.sin(g_seconds);
-        this.setAngle(angleX, 0, 0);
+        let angleX = 0;
+        let angleY = 0;
+        let angleZ = 0;
+        switch (anim){
+            case animation_status.WALK:
+                angleX = -10*Math.sin(2*g_seconds);
+                break;
+        }
+        this.setAngle(angleX, angleY, angleZ);
     }
 }
 
@@ -123,8 +141,22 @@ class GoronUpperArmMaster extends FunkyCylinder{
 
 class GoronUpperArmInstance extends instanceReference{
     animate(){
-        let angleZ = 25*Math.sin(g_seconds);
-        this.setAngle(0, 0, angleZ);
+        let angleX = 0;
+        let angleY = 0;
+        let angleZ = 0;
+        switch (anim){
+            case animation_status.WAVE:
+                angleZ = 25*Math.sin(3*g_seconds * Math.sign(this.translateP[0])) + 90 * Math.sign(this.translateP[0]) ;
+                break;
+            case animation_status.NONE:
+                angleZ = upperArmZ;
+                break;
+            case animation_status.WALK:
+                angleZ = -(160-135)* Math.sign(this.translateP[0]);
+                angleX = 60*Math.sin(2*g_seconds * Math.sign(this.translateP[0]));
+                break;
+        }
+        this.setAngle(angleX, angleY, angleZ);
     }
 
 }
@@ -143,27 +175,65 @@ class GoronLowerArmMaster extends FunkyCylinder{
 
 class GoronLowerArmInstance extends instanceReference{
     animate(){
-        let angleZ = 25*Math.sin(g_seconds);
-        this.setAngle(0, 0, angleZ);
+        let angleX = 0;
+        let angleY = 0;
+        let angleZ = 0;
+        switch (anim){
+            case animation_status.WAVE:
+                angleZ = 15*Math.sin(3*g_seconds * Math.sign(this.parentMatrix.elements[4]));
+                break;
+            case animation_status.NONE:
+                angleZ = lowerArmZ;
+                break;
+            case animation_status.WALK:
+                angleX = 25*Math.sin(2*g_seconds * Math.sign(this.parentMatrix.elements[4]))+25;
+                break;
+        }
+        this.setAngle(angleX, angleY, angleZ);
     }
 }
 
 class GoronUpperLegInstance extends instanceReference{
+    animate(){
+        let angleX = 0;
+        let angleY = 0;
+        let angleZ = 0;
+        switch (anim){
+            case animation_status.WALK:
+                angleX = 60*Math.sin(2*g_seconds * Math.sign(this.translateP[0]));
+                break;
+        }
+        this.setAngle(angleX, angleY, angleZ);
+    }
 
 }
 
 class GoronLowerLegInstance extends instanceReference{
+    animate(){
+        let angleX = 0;
+        let angleY = 0;
+        let angleZ = 0;
+        switch (anim){
+            case animation_status.WALK:
+                angleX = 25*Math.sin(2*g_seconds * Math.sign(this.parentMatrix.elements[4]))-25;
+                break;
+        }
+        this.setAngle(angleX, angleY, angleZ);
+    }
 
 }
 
 class BasicCyliner extends FunkyCylinder{
     constructor(){
-        super(6);
+        super(50);
+        this.addPoint([0,0], -1);
+        this.addLayer([0,0], 0, 5);
+        this.addLayer([0,0], 2, 5);
         this.addPoint([0,0], 0);
-        this.addLayer([0,0], 2, 2.5);
-        this.addLayer([0,0], 8, 3);
-        this.addLayer([0,0], 8, 2);
-        this.addPoint([0,0], 2);
         this.initNormals();
     }
+}
+
+class EyeInstance extends instanceReference{
+
 }
