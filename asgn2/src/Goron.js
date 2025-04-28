@@ -69,6 +69,13 @@ class Goron{
             [0, 13, 0], [1, 0.7, 1], [0, 0, 0]
         ));
 
+        //HORN
+        this.GoronHornInstances = [];
+        this.GoronHornInstances.push(new GoronHornInstance(
+            this.GoronHeadInstance.tempMatrix, [1,1,1,1], undefined,
+            [0, 15, 0], [1,1,1], [0,0,0]
+        ));
+
         anim = animation_status.WALK;
     }
 }
@@ -100,10 +107,15 @@ class GoronBodyInstance extends instanceReference{
         let angleX = 0;
         let angleY = 0;
         let angleZ = 0;
+        if (anim != animation_status.WALK){
+            this.translateP[1] = this.dy;
+        }
         switch (anim){
             case animation_status.WALK:
                 angleX = -10*Math.sin(2*g_seconds);
+                this.translateP[1] += 0.4*Math.cos(2*g_seconds);
                 break;
+                
         }
         this.setAngle(angleX, angleY, angleZ);
     }
@@ -235,5 +247,19 @@ class BasicCyliner extends FunkyCylinder{
 }
 
 class EyeInstance extends instanceReference{
+
+}
+
+class GoronHornMaster extends FunkyCylinder{
+    constructor(){
+        super(10);
+        this.addPoint([0,0], 0);
+        this.addLayer([0,0], 0, 6.01);
+        this.addPoint([0,0], 4.01);
+        this.initNormals();
+    }
+}
+
+class GoronHornInstance extends instanceReference{
 
 }

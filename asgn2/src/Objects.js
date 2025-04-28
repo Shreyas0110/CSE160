@@ -21,9 +21,7 @@ class instanceReference{
         this.translateR = translateR;
         this.translateP = translateP;
         this.scale = scale;
-        this.rx = new Matrix4();
-        this.ry = new Matrix4();
-        this.rz = new Matrix4();
+        this.dy = translateP[1];
     }
 
     setModelMatrix(matrixData, offset){

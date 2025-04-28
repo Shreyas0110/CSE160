@@ -174,14 +174,19 @@ function main() {
   let masterHead = new GoronHeadMaster();
   let masterUpperArm = new GoronUpperArmMaster();
   let masterLowerArm = new GoronLowerArmMaster();
+  let masterHorn = new GoronHornMaster();
 
-  let mainGoron = new Goron(undefined, [0, 30, 0]);
+  let gorons = [];
+
+  gorons.push(new Goron(undefined, [0, 30, 0]));
+  gorons.push(new Goron([1, 1, 1, 1], [30, 30/1.5, 30], [0.5, 0.5, 0.5]));
 
   instanceList.push(new InstanceHandler(floor, [mainfloor]));
-  instanceList.push(new InstanceHandler(masterBody, [mainGoron.bodyInstance]));
-  instanceList.push(new InstanceHandler(masterHead, [mainGoron.GoronHeadInstance]));
-  instanceList.push(new InstanceHandler(masterUpperArm, [...mainGoron.GoronUpperArmInstances]));
-  instanceList.push(new InstanceHandler(masterLowerArm, [...mainGoron.GoronLowerArmInstances]));
+  instanceList.push(new InstanceHandler(masterBody, gorons.map(item => item.bodyInstance)));
+  instanceList.push(new InstanceHandler(masterHead, gorons.map(item => item.GoronHeadInstance)));
+  instanceList.push(new InstanceHandler(masterUpperArm, gorons.flatMap(item => item.GoronUpperArmInstances)));
+  instanceList.push(new InstanceHandler(masterLowerArm, gorons.flatMap(item => item.GoronLowerArmInstances)));
+  instanceList.push(new InstanceHandler(masterHorn, gorons.flatMap(item => item.GoronHornInstances)));
 
   requestAnimationFrame(tick);
 

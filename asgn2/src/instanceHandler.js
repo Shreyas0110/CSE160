@@ -10,13 +10,14 @@ class InstanceHandler{
     createVAO(object, instances){
         let vertices = object.getVertices();
         let normals = object.normals;
-        let matrices = [];
-        let colors = []
-
+        let matrices = instances.flatMap(item => Array.from(item.tempMatrix.elements));
+        let colors = instances.flatMap(item => item.color);
+/*
         for (let instance of instances){
+            console.log(instance);
             matrices.push(...instance.tempMatrix.elements);
             colors.push(...instance.color);
-        }
+        }*/
       
         const vao = gl.createVertexArray();
         gl.bindVertexArray(vao);
