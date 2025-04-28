@@ -21,7 +21,7 @@ class Goron{
         //HEAD
         this.GoronHeadInstance = new GoronHeadInstance(
             this.bodyInstance.tempMatrix, color, undefined,
-            [0,45, 2], undefined, [0,0,0]
+            [0,43, 2], [1.1, 1.1, 1.1], [0,0,0]
         );
 
         this.GoronUpperArmInstances = [];
@@ -30,12 +30,12 @@ class Goron{
         //UPPER ARMS
         this.GoronUpperArmInstances.push(new GoronUpperArmInstance(
             this.bodyInstance.tempMatrix, color, undefined,
-            [-16, 40, 0], [1.1, 1.1, 1.3], [0, 0, 135]
+            [-16, 40, 0], [1.6, 1.4, 1.4], [0, 0, 135]
         ));
 
         this.GoronUpperArmInstances.push(new GoronUpperArmInstance(
             this.bodyInstance.tempMatrix, color, undefined,
-            [16, 40, 0], [1.1, 1.1, 1.3], [0, 0, -135]
+            [16, 40, 0],  [1.6, 1.4, 1.4], [0, 0, -135]
         ));
 
         //UPPER LEGS
@@ -70,13 +70,88 @@ class Goron{
         ));
 
         //HORN
+
+        let hornColor = [Math.min(1, color[0] + (216-goronbodycolor[0])/255), Math.min(1, color[1] + (210-goronbodycolor[1])/255), Math.min(1, color[2] + (113-goronbodycolor[2])/255), 1];
         this.GoronHornInstances = [];
         this.GoronHornInstances.push(new GoronHornInstance(
-            this.GoronHeadInstance.tempMatrix, [1,1,1,1], undefined,
-            [0, 15, 0], [1,1,1], [0,0,0]
+            this.GoronHeadInstance.tempMatrix, hornColor, undefined,
+            [0, 15.2, 0], [1,1,1], [0,0,0]
+        ));
+
+        this.cylinders = [];
+
+        //eye base
+        this.cylinders.push(new CylinderInstance(
+            this.GoronHeadInstance.tempMatrix, [0.1,0.1,0.1,1], undefined,
+            [-5, 10, 8.6], [0.5,0.2,0.5], [55,-25,0]
+        ));
+
+        this.cylinders.push(new CylinderInstance(
+            this.GoronHeadInstance.tempMatrix, [0.1,0.1,0.1,1], undefined,
+            [5, 10, 8.6], [0.5,0.2,0.5], [55,25,0]
+        ));
+
+        //iris
+        let iriscolor = [153/255,50/255,204/255, 1];
+        this.cylinders.push(new CylinderInstance(
+            this.cylinders[0].tempMatrix, iriscolor, undefined,
+            [0, 1, 0], [0.7,0.2,0.7], [0,0,0]
+        ));
+
+        this.cylinders.push(new CylinderInstance(
+            this.cylinders[1].tempMatrix, iriscolor, undefined,
+            [0, 1, 0], [0.7,0.2,0.7], [0,0,0]
+        ));
+
+        //pupil
+        this.cylinders.push(new CylinderInstance(
+            this.cylinders[0].tempMatrix, [0.1, 0.1, 0.1, 1], undefined,
+            [0, 1.1, 1], [0.3,0.2,0.3], [0,0,0]
+        ));
+
+        this.cylinders.push(new CylinderInstance(
+            this.cylinders[1].tempMatrix, [0.1, 0.1, 0.1, 1], undefined,
+            [0, 1.1, 1], [0.3,0.2,0.3], [0,0,0]
+        ));
+
+        //eye light
+        this.cylinders.push(new CylinderInstance(
+            this.cylinders[0].tempMatrix, [1, 1, 1, 1], undefined,
+            [-1, 1.1, -1.5], [0.2,0.2,0.2], [0,0,0]
+        ));
+
+        this.cylinders.push(new CylinderInstance(
+            this.cylinders[1].tempMatrix, [1, 1, 1, 1], undefined,
+            [-1, 1.1, -1.5], [0.2,0.2,0.2], [0,0,0]
+        ));
+
+        //nose
+        this.cylinders.push(new CylinderInstance(
+            this.GoronHeadInstance.tempMatrix, [0.1, 0.1, 0.1, 1], undefined,
+            [-1, 7, 11], [0.1,0.1,0.15], [60,0,-45]
+        ));
+        this.cylinders.push(new CylinderInstance(
+            this.GoronHeadInstance.tempMatrix, [0.1, 0.1, 0.1, 1], undefined,
+            [1, 7, 11], [0.1,0.1,0.15], [60,0,45]
+        ));
+
+        //mouth
+        this.cylinders.push(new CylinderInstance(
+            this.GoronHeadInstance.tempMatrix, [177/255,114/255,97/255,1], undefined,
+            [0, 4, 9.5], [1.3,0.9,0.7], [0,0,0]
+        ));
+
+
+
+        //belly button
+        this.cylinders.push(new CylinderInstance(
+            this.bodyInstance.tempMatrix, [0.1,0.1,0.1,1], undefined,
+            [0, 10, 20], [0.3,0.2,0.3], [110,0,0]
         ));
 
         anim = animation_status.WALK;
+
+
     }
 }
 
@@ -112,6 +187,11 @@ class GoronBodyInstance extends instanceReference{
         }
         switch (anim){
             case animation_status.WALK:
+                //if(g_seconds > this.anim_end){
+                    //this.anim_end = g_seconds + 3;
+                    //this.translateP[1] = this.dy;
+                    //angleY = Math.random()*360;
+                //}
                 angleX = -10*Math.sin(2*g_seconds);
                 this.translateP[1] += 0.4*Math.cos(2*g_seconds);
                 break;
@@ -235,7 +315,7 @@ class GoronLowerLegInstance extends instanceReference{
 
 }
 
-class BasicCyliner extends FunkyCylinder{
+class BasicCylinder extends FunkyCylinder{
     constructor(){
         super(50);
         this.addPoint([0,0], -1);
@@ -246,7 +326,7 @@ class BasicCyliner extends FunkyCylinder{
     }
 }
 
-class EyeInstance extends instanceReference{
+class CylinderInstance extends instanceReference{
 
 }
 
@@ -261,5 +341,16 @@ class GoronHornMaster extends FunkyCylinder{
 }
 
 class GoronHornInstance extends instanceReference{
+    animate(){
+        if (this.render == true){
+            super.animate();
+        } else{
+            this.tempMatrix.elements =
+                [0,0,0,0,
+                0,0,0,0,
+                0,0,0,0,
+                0,0,0,0];
+        }
+    }
 
 }
