@@ -80,6 +80,13 @@ class InstanceHandler{
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.matrixData);
         gl.uniform1i(u_UseLighting, this.hasLight);
         gl.uniform1i(u_UseTexture, this.whichTexture);
+        if(this.whichTexture == 1){
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, tex1);
+        }else if(this.whichTexture == 2){
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, tex2);
+        }
 
         gl.bindVertexArray(this.vao);
       

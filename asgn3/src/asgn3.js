@@ -34,12 +34,15 @@ var FSHADER_SOURCE = `
   varying vec2 v_UV;
   uniform int u_UseTexture; 
   uniform sampler2D u_Sampler;
+  uniform sampler2D u_Sampler2;
 
   void main() {
     gl_FragColor = v_FragColor;
 
     if (u_UseTexture == 1) {
       gl_FragColor = texture2D(u_Sampler, v_UV);
+    } else if(u_UseTexture == 2){
+     gl_FragColor = texture2D(u_Sampler2, v_UV);
     }
 
     if(u_UseLighting){
@@ -64,6 +67,7 @@ let MainCamera;
 let u_UseLighting;
 let u_UseTexture;
 let u_Sampler;
+let u_Sampler2;
 let a_UV;
 
 function setupWebGL(){
@@ -126,7 +130,10 @@ function connectVariablesToGLSL(){
   u_UseLighting = gl.getUniformLocation(gl.program, 'u_UseLighting');
   u_UseTexture = gl.getUniformLocation(gl.program, 'u_UseTexture');
   a_UV = gl.getAttribLocation(gl.program, "a_UV");
+  u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler');
+  u_Sampler2 = gl.getUniformLocation(gl.program, 'u_Sampler2');
   loadTexture(sky);
+  loadTexture2(dirt);
 }
 
 let light = (new Vector3([0.5, 0.7, 1])).normalize().elements;
@@ -187,14 +194,24 @@ function main() {
   let masterHorn = new GoronHornMaster();
   let masterCylinder = new BasicCylinder();
   let masterCube = new Cube();
+  let world = [];
 
   let gorons = [];
+
+  for(let i = 0; i < 32; ++i){
+    for (let j = 0; j < 32; ++j){
+      if(maze[i*32+j] == 1){
+        world.push(new instanceReference(eye, [1, 0, 0, 1], undefined,[-640+j*40, 1, -640+i*40], [20,20,20], undefined, true));
+      }
+    }
+  }
 
   gorons.push(new Goron(undefined, [0, 30, 0]));
   let skyCube = new instanceReference(eye, [0.5, 0.5, 0.5, 1], undefined, [0,4,0], [2000,2000,2000], undefined, false);
 
   instanceList.push(new InstanceHandler(floor, [mainfloor]));
   instanceList.push(new InstanceHandler(masterCube, [skyCube], false, 1));
+  instanceList.push(new InstanceHandler(masterCube, world, true, 2));
   
   instanceList.push(new InstanceHandler(masterBody, gorons.map(item => item.bodyInstance)));
   instanceList.push(new InstanceHandler(masterHead, gorons.map(item => item.GoronHeadInstance)));
