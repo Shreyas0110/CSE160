@@ -1,4 +1,5 @@
-let dirt = "../textures/dirt.jpg"
+let dirt = "../textures/dirt.jpg";
+let sky = "../textures/sky.png";
 
 function loadTexture(url) {
   const texture = gl.createTexture();

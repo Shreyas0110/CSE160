@@ -23,10 +23,10 @@ function addActionfromUI(){
                 MainCamera.startMovingRight();
                 break;
             case 'q':
-                MainCamera.startPanLeft();
+                MainCamera.startPanLeft(3);
                 break;
             case 'e':
-                MainCamera.startPanRight();
+                MainCamera.startPanRight(3);
         }
     });
 

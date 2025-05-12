@@ -126,7 +126,7 @@ function connectVariablesToGLSL(){
   u_UseLighting = gl.getUniformLocation(gl.program, 'u_UseLighting');
   u_UseTexture = gl.getUniformLocation(gl.program, 'u_UseTexture');
   a_UV = gl.getAttribLocation(gl.program, "a_UV");
-  loadTexture(dirt);
+  loadTexture(sky);
 }
 
 let light = (new Vector3([0.5, 0.7, 1])).normalize().elements;
@@ -193,8 +193,8 @@ function main() {
   gorons.push(new Goron(undefined, [0, 30, 0]));
   let skyCube = new instanceReference(eye, [0.5, 0.5, 0.5, 1], undefined, [0,4,0], [2000,2000,2000], undefined, false);
 
-  //instanceList.push(new InstanceHandler(floor, [mainfloor]));
-  instanceList.push(new InstanceHandler(masterCube, [skyCube], true, 1));
+  instanceList.push(new InstanceHandler(floor, [mainfloor]));
+  instanceList.push(new InstanceHandler(masterCube, [skyCube], false, 1));
   
   instanceList.push(new InstanceHandler(masterBody, gorons.map(item => item.bodyInstance)));
   instanceList.push(new InstanceHandler(masterHead, gorons.map(item => item.GoronHeadInstance)));

@@ -5,7 +5,7 @@ let rotationSensitivity = 5000;
 
 class Camera{
     constructor(eye = [0,60,600], at = [0,30,-1], up = [0,1,0]){
-        this.perspectiveMatrix = new Matrix4().setPerspective(30, canvas.clientWidth / canvas.clientHeight, .1, 4000);
+        this.perspectiveMatrix = new Matrix4().setPerspective(30, canvas.clientWidth / canvas.clientHeight, .1, 6000);
         this.eye = new Vector3(eye);
         this.at = new Vector3(at);
         this.up = new Vector3(up);
