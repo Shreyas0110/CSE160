@@ -9,12 +9,24 @@
     <canvas id="webgl" width="700" height="700">
     Please use a browser that supports "canvas"
     </canvas>
+    <p id="gcount">Number of times Goron has been caught: 0</p>
     <p id="numdot">ms: n/a fps: n/a</p>
+
 
     <p>
       <button type="button" id="animON">Animation ON</button>  
       <button type="button" id="animOFF">Animation OFF</button>
     <p>
+    Note to Graders: 
+    The framerate is not bad, but the sensitivity for the camera can be inconsistent based on framerate. 
+    This can make panning with the mouse feel bad. Using mouse keys to move the camera should feel smooth.
+    <p>
+    Wow: there is basic lighting on the blocks on the ground
+    </p>
+    <p>
+    Simple Game: run at the Goron to catch it. Once you do, it will teleport to a random location.
+    </p>
+    You can add blocks by clicking the RIGHT mouse button. These blocks will be added in front of the camera.
 
     <script src="../lib/webgl-utils.js"></script>
     <script src="../lib/webgl-debug.js"></script>

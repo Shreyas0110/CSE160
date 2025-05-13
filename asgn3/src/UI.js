@@ -95,4 +95,23 @@ function addActionfromUI(){
             MainCamera.stopPanDown();
         }
     }
+    let mouseDown = false;
+    canvas.addEventListener('mousedown', function (e) {
+    if (e.button === 2 && !mouseDown) { // 0 is the left mouse button
+        mouseDown = true;
+        let e = MainCamera.eye.elements;
+        MainCamera.computeF();
+        MainCamera.f.normalize();
+        MainCamera.f.mul(150);
+        let f = MainCamera.f.elements;
+        let b = [new instanceReference(eye, [1, 0, 0, 1], undefined, [e[0] + f[0], e[1] + f[1], e[2] + f[2]], [20,20,20], undefined, true)];
+        instanceList.push(new InstanceHandler(masterCube, b, true, 2));
+    }
+    });
+
+    canvas.addEventListener('mouseup', function (e) {
+    if (e.button === 2) {
+        mouseDown = false;
+    }
+    });
 }

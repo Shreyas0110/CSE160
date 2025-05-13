@@ -2,9 +2,10 @@ let zSensitivity = 100000;
 let xSensitivity = 60000;
 
 let rotationSensitivity = 5000;
+let goronCaught = 0;
 
 class Camera{
-    constructor(eye = [0,60,600], at = [0,30,-1], up = [0,1,0]){
+    constructor(eye = [0,60,200], at = [0,30,-1], up = [0,1,0]){
         this.perspectiveMatrix = new Matrix4().setPerspective(30, canvas.clientWidth / canvas.clientHeight, .1, 6000);
         this.eye = new Vector3(eye);
         this.at = new Vector3(at);
@@ -47,6 +48,12 @@ class Camera{
             this.panDown(panSpeed*this.downPan);
         }
         let eye = this.eye.elements;
+        let t = 50;
+        if(Math.abs(eye[0] - goronPos[0]) <= t && Math.abs(eye[1] - goronPos[1]) <= t && Math.abs(eye[2] - goronPos[2]) <= t){
+            goronCaught++;
+            sendTextToHTML("Number of times Goron has been caught: " + goronCaught, "gcount");
+            gorons[0].teleport();
+        }
         let at = this.at.elements;
         let up = this.up.elements;
         this.matrix.set(this.perspectiveMatrix);
