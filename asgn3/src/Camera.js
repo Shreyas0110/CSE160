@@ -1,7 +1,7 @@
 let zSensitivity = 100000;
 let xSensitivity = 60000;
 
-let rotationSensitivity = 500;
+let rotationSensitivity = 50;
 let goronCaught = 0;
 
 class Camera{
