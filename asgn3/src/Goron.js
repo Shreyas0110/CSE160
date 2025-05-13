@@ -9,8 +9,11 @@ const animation_status = {
 
 let anim = animation_status.WALK;
 
+var goronPos = [-10000, -100000, -10000];
+
 class Goron{
     constructor(color = goronbodycolor, location = [0,0,0], scale = [1, 1, 1]){
+        goronPos = location;
         this.location = new Vector3(location);
 
         //BODY
@@ -106,23 +109,23 @@ class Goron{
         //pupil
         this.cylinders.push(new CylinderInstance(
             this.cylinders[0].tempMatrix, [0.1, 0.1, 0.1, 1], undefined,
-            [0, 1.1, 1], [0.3,0.2,0.3], [0,0,0]
+            [0, 1.5, 1], [0.3,0.2,0.3], [0,0,0]
         ));
 
         this.cylinders.push(new CylinderInstance(
             this.cylinders[1].tempMatrix, [0.1, 0.1, 0.1, 1], undefined,
-            [0, 1.1, 1], [0.3,0.2,0.3], [0,0,0]
+            [0, 1.5, 1], [0.3,0.2,0.3], [0,0,0]
         ));
 
         //eye light
         this.cylinders.push(new CylinderInstance(
             this.cylinders[0].tempMatrix, [1, 1, 1, 1], undefined,
-            [-1, 1.1, -1.5], [0.2,0.2,0.2], [0,0,0]
+            [-1, 1.5, -1.5], [0.2,0.2,0.2], [0,0,0]
         ));
 
         this.cylinders.push(new CylinderInstance(
             this.cylinders[1].tempMatrix, [1, 1, 1, 1], undefined,
-            [-1, 1.1, -1.5], [0.2,0.2,0.2], [0,0,0]
+            [-1, 1.5, -1.5], [0.2,0.2,0.2], [0,0,0]
         ));
 
         //nose
@@ -152,6 +155,14 @@ class Goron{
         anim = animation_status.WALK;
 
 
+    }
+
+    teleport(){
+        let x = -640 + Math.random() * 1280;
+        let y = 30;
+        let z = -640 + Math.random() * 1280;
+        goronPos = [x,y,z];
+        this.bodyInstance.translateP = [x, y, z];
     }
 }
 

@@ -50,7 +50,7 @@ var FSHADER_SOURCE = `
  
       float light = dot(normal, u_reverseLightDirection);
     
-      gl_FragColor.rgb *= max((light/2.0 + 0.5), 0.6);
+      gl_FragColor.rgb *= max((light/2.0 + 0.5), 0.2);
     }
   }`;
 
@@ -169,6 +169,8 @@ var floor;
 var instanceList = [];
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0 - g_startTime;
+var gorons = [];
+let masterCube;
 
 function main() {
 
@@ -193,20 +195,22 @@ function main() {
   let masterLowerArm = new GoronLowerArmMaster();
   let masterHorn = new GoronHornMaster();
   let masterCylinder = new BasicCylinder();
-  let masterCube = new Cube();
+  masterCube = new Cube();
   let world = [];
-
-  let gorons = [];
 
   for(let i = 0; i < 32; ++i){
     for (let j = 0; j < 32; ++j){
-      if(maze[i*32+j] == 1){
-        world.push(new instanceReference(eye, [1, 0, 0, 1], undefined,[-640+j*40, 1, -640+i*40], [20,20,20], undefined, true));
+      if(i == 0 || i == 31 || j == 0 || j == 31){
+        for (let z = 1; z <= 6; ++z){
+          world.push(new instanceReference(eye, [1, 0, 0, 1], undefined,[-640+j*40, 20*z, -640+i*40], [20,20,20], undefined, true));
+        }
+      } else if(maze[i*32+j] == 1){
+        world.push(new instanceReference(eye, [1, 0, 0, 1], undefined,[-640+j*40, 20, -640+i*40], [20,20,20], undefined, true));
       }
     }
   }
 
-  gorons.push(new Goron(undefined, [0, 30, 0]));
+  gorons.push(new Goron(undefined, [0, 50, 0]));
   let skyCube = new instanceReference(eye, [0.5, 0.5, 0.5, 1], undefined, [0,4,0], [2000,2000,2000], undefined, false);
 
   instanceList.push(new InstanceHandler(floor, [mainfloor]));
