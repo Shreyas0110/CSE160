@@ -8,14 +8,16 @@ let lightY = 50;
 let lightZ = 50;
 let lightColor = [1.0,1.0,1.0];
 let lightOn = true;
+let Spotlight = false;
 
 function addActionfromUI(){
 
     document.getElementById("animON").addEventListener('mouseup', function(){anim = animation_status.WALK});
     document.getElementById("animOFF").addEventListener('mouseup', function(){anim = animation_status.NONE});
     document.getElementById("showNormals").addEventListener('mouseup', function(){normalsOn = true;});
-    document.getElementById("hideNormals").addEventListener('mouseup', function(){normalsOn = false;lightOn=true;});
-    document.getElementById("lightOff").addEventListener('mouseup', function(){normalsOn = false;lightOn=false;});
+    document.getElementById("hideNormals").addEventListener('mouseup', function(){normalsOn = false;lightOn=true; Spotlight = false;});
+    document.getElementById("lightOff").addEventListener('mouseup', function(){normalsOn = false; lightOn=false; Spotlight = false;});
+    document.getElementById("Spotlight").addEventListener('mouseup', function(){normalsOn = false;lightOn=true; Spotlight = true;});
 
     document.getElementById("LanimON").addEventListener('mouseup', function(){lightAnim = true;});
     document.getElementById("LanimOFF").addEventListener('mouseup', function(){lightAnim = false;});

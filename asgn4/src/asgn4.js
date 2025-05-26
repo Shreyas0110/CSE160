@@ -51,6 +51,10 @@ var FSHADER_SOURCE = `
 
   uniform vec3 u_LightColor;
 
+  uniform bool u_UseSpotlight;
+  uniform vec3 u_SpotlightDir;
+  uniform float u_SpotlightCutoff;
+
 
   void main() {
     gl_FragColor = v_FragColor;
@@ -77,15 +81,27 @@ var FSHADER_SOURCE = `
 
       vec3 E = normalize(u_cameraPos-v_VertPos);
 
-      float specular = pow(max(dot(E,R), 0.0), 32.0);
-      vec3 specularReal = specular * u_LightColor;
+      float spotEffect = 1.0;
+      if (u_UseSpotlight) {
+        // Check if within spotlight cone
+        float spotCos = dot(-L, normalize(u_SpotlightDir)); // light points toward negative direction
+        if (spotCos < u_SpotlightCutoff) {
+          spotEffect = 0.0;
+        }
+      }
 
-      vec3 diffuse = vec3(gl_FragColor) * nDotL *0.7 * u_LightColor;
+      float specular = pow(max(dot(E, R), 0.0), 32.0);
+      vec3 specularReal = specular * u_LightColor * spotEffect;
+      vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7 * u_LightColor * spotEffect;
       vec3 ambient = vec3(gl_FragColor) * 0.3 * u_LightColor;
-    
+
       gl_FragColor.rgb = diffuse + ambient + specularReal;
     }
   }`;
+
+let u_UseSpotlight;
+let u_SpotlightDir;
+let u_SpotlightCutoff;
 
 let u_lightColor;
 let u_lightPos;
@@ -175,6 +191,10 @@ function connectVariablesToGLSL(){
   u_GlobalLighting = gl.getUniformLocation(gl.program, 'u_GlobalLighting');
   u_lightPos = gl.getUniformLocation(gl.program, 'u_lightPos');
   u_lightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
+
+  u_UseSpotlight = gl.getUniformLocation(gl.program, 'u_UseSpotlight');
+  u_SpotlightDir = gl.getUniformLocation(gl.program, 'u_SpotlightDir');
+  u_SpotlightCutoff = gl.getUniformLocation(gl.program, 'u_SpotlightCutoff');
   loadTexture(sky);
   loadTexture2(dirt);
 }
@@ -190,7 +210,10 @@ function render(){
   let cameraPos = MainCamera.eye.elements;
   gl.uniform3fv(u_cameraPos, cameraPos);
   gl.uniform1i(u_GlobalLighting, lightOn ? 1 : 0);
+  gl.uniform1i(u_UseSpotlight, Spotlight ? 1 : 0);
   gl.uniform3fv(u_lightColor, lightColor);
+  gl.uniform3fv(u_SpotlightDir, [0,-1, 0]);
+  gl.uniform1f(u_SpotlightCutoff, Math.cos(Math.PI/6));
 
   for(let i = 0; i < instanceList.length; ++i){
     instanceList[i].renderInstance();
