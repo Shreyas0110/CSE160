@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Assignment 4</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="700" height="700">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <p id="gcount">Number of times Goron has been caught: 0</p>
+    <p id="numdot">ms: n/a fps: n/a</p>
+
+    <p>
+      <button type="button" id="showNormals">Show Normals</button>  
+      <button type="button" id="hideNormals">Show Lighting</button>
+      <button type="button" id="lightOff">No Lighting</button>
+    <p>
+
+      Light Toggles
+    <p>
+      Light X <input type="range" min="0" max="100" value="50" class="slider" id="XSlide">
+      Light Y <input type="range" min="0" max="100" value="50" class="slider" id="YSlide">
+      Light Z <input type="range" min="0" max="100" value="50" class="slider" id="ZSlide">
+      <p></p>
+      Light R <input type="range" min="0" max="100" value="100" class="slider" id="RSlide">
+      Light G <input type="range" min="0" max="100" value="100" class="slider" id="GSlide">
+      Light B <input type="range" min="0" max="100" value="100" class="slider" id="BSlide">
+      <p></p>
+      <button type="button" id="LanimON">Animation ON</button>  
+      <button type="button" id="LanimOFF">Animation OFF</button>
+    <p>
+
+    
+      Animal Animation
+      <p>
+      <button type="button" id="animON">Animation ON</button>  
+      <button type="button" id="animOFF">Animation OFF</button>
+    <p>
+    Note to Graders: 
+    Skybox lighting is always on
+
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/cuon-matrix.js"></script>
+    <script src="asgn4.js"></script>
+    <script src="Shapes.js"></script>
+    <script src="FunkyCylinder.js"></script>
+    <script src="instanceHandler.js"></script>
+    <script src="Cube.js"></script>
+    <script src="Objects.js"></script>
+    <script src="UI.js"></script>
+    <script src="Goron.js"></script>
+    <script src="Camera.js"></script>
+    <script src="Texture.js"></script>
+    <script src="world.js"></script>
+  </body>
+</html>
