@@ -200,6 +200,10 @@ function connectVariablesToGLSL(){
 }
 
 function render(){
+  if(!teapotLoaded && teapotMaster.loaded){
+    teapotLoaded = true;
+    instanceList.push(new InstanceHandler(teapotMaster, [teapotInstance]));
+  }
   let ViewMatrix = MainCamera.getCameraMatrix();
 
   gl.useProgram(gl.program);
@@ -241,6 +245,9 @@ var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0 - g_startTime;
 var gorons = [];
 let masterCube;
+let teapotMaster;
+let teapotLoaded;
+let teapotInstance;
 
 function main() {
 
@@ -269,6 +276,9 @@ function main() {
   masterCube = new Cube();
   let world = [];
 
+  teapotMaster = new Model("../textures/teapot.obj");
+  teapotLoaded = false;
+
   for(let i = 0; i < 32; ++i){
     for (let j = 0; j < 32; ++j){
       if(i == 0 || i == 31 || j == 0 || j == 31){
@@ -285,6 +295,7 @@ function main() {
   let skyCube = new instanceReference(eye, [0.5, 0.5, 0.5, 1], undefined, [0,4,0], [-2000,-2000,-2000], undefined, true);
   let sphere = new instanceReference(eye, [1,1,1,1], undefined, [-50,50, 0], [3,3,3], undefined, true);
   let lightcube = new LightReference(eye, [1,1,0,1], undefined, lightPos, [5,5,5]);
+  teapotInstance = new instanceReference(eye, [1,1,1,1], undefined, [0, 120, 0], [10,10,10], undefined, true);
 
   instanceList.push(new InstanceHandler(masterCube, [lightcube], false));
 

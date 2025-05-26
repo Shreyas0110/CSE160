@@ -135,3 +135,27 @@ class LightReference extends instanceReference{
         this.translateP = lightPos;
     }
 }
+
+class Model{
+    constructor(filePath) {
+        this.filePath = filePath;
+        this.color = [1.0, 1.0, 1.0, 1.0];
+        this.loader = new OBJLoader(this.filePath);
+        this.loaded = false;
+
+        this.loader.parseModel().then(() => {
+            this.modelData = this.loader.getModelData();
+            this.vertices = this.modelData.vertices;
+            this.normals = this.modelData.normals;
+            this.uvs = [];
+            for (let i = 0; i < this.vertices.length; ++i){
+                this.uvs.push(0,0);
+            }
+            this.loaded = true;
+        });
+    }
+
+    getVertices(){
+        return this.vertices;
+    }
+}
