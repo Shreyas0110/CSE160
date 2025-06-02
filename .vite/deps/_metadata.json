@@ -1,0 +1,61 @@
+{
+  "hash": "be9b4156",
+  "configHash": "628ef225",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "a7062a1d",
+  "optimized": {
+    "three": {
+      "src": "../../asgn5/node_modules/three/build/three.module.js",
+      "file": "three.js",
+      "fileHash": "a953b669",
+      "needsInterop": false
+    },
+    "three/addons/loaders/GLTFLoader.js": {
+      "src": "../../asgn5/node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "file": "three_addons_loaders_GLTFLoader__js.js",
+      "fileHash": "f3fafeb9",
+      "needsInterop": false
+    },
+    "three/addons/postprocessing/OutputPass.js": {
+      "src": "../../asgn5/node_modules/three/examples/jsm/postprocessing/OutputPass.js",
+      "file": "three_addons_postprocessing_OutputPass__js.js",
+      "fileHash": "0825c0d4",
+      "needsInterop": false
+    },
+    "three/examples/jsm/controls/OrbitControls.js": {
+      "src": "../../asgn5/node_modules/three/examples/jsm/controls/OrbitControls.js",
+      "file": "three_examples_jsm_controls_OrbitControls__js.js",
+      "fileHash": "c432a5c8",
+      "needsInterop": false
+    },
+    "three/examples/jsm/postprocessing/EffectComposer.js": {
+      "src": "../../asgn5/node_modules/three/examples/jsm/postprocessing/EffectComposer.js",
+      "file": "three_examples_jsm_postprocessing_EffectComposer__js.js",
+      "fileHash": "8f9103e4",
+      "needsInterop": false
+    },
+    "three/examples/jsm/postprocessing/RenderPass.js": {
+      "src": "../../asgn5/node_modules/three/examples/jsm/postprocessing/RenderPass.js",
+      "file": "three_examples_jsm_postprocessing_RenderPass__js.js",
+      "fileHash": "1fb3cfe5",
+      "needsInterop": false
+    },
+    "three/examples/jsm/postprocessing/UnrealBloomPass.js": {
+      "src": "../../asgn5/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "file": "three_examples_jsm_postprocessing_UnrealBloomPass__js.js",
+      "fileHash": "d79baf82",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-4T5LEENL": {
+      "file": "chunk-4T5LEENL.js"
+    },
+    "chunk-SX3FT457": {
+      "file": "chunk-SX3FT457.js"
+    },
+    "chunk-GGVIGR3T": {
+      "file": "chunk-GGVIGR3T.js"
+    }
+  }
+}
