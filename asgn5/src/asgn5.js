@@ -4,7 +4,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
 
 const FIXED_WIDTH = 800;
 const FIXED_HEIGHT = 600;
@@ -37,28 +37,6 @@ const geometry = new THREE.SphereGeometry(1, 10, 10);
 geometry.scale(3, 1, 1);
 const cube = createFakeBloom(geometry);//new THREE.Mesh( geometry, material );
 //scene.add( cube );
-
-function dumpObject(obj, lines = [], isLast = true, prefix = '') {
-  const localPrefix = isLast ? '└─' : '├─';
-  lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
-  const newPrefix = prefix + (isLast ? '  ' : '│ ');
-  const lastNdx = obj.children.length - 1;
-  obj.children.forEach((child, ndx) => {
-    const isLast = ndx === lastNdx;
-    dumpObject(child, lines, isLast, newPrefix);
-  });
-  return lines;
-}
-
-{
-  const gltfLoader = new GLTFLoader();
-  const url = 'assets/sci-fi_city/scene.gltf';
-  gltfLoader.load(url, (gltf) => {
-    const root = gltf.scene;
-    scene.add(root);
-    console.log(dumpObject(root).join('\n'));
-  });
-}
 
 function resizeCanvas() {
   const screenWidth = window.innerWidth;
@@ -96,37 +74,4 @@ function animate() {
 
   composer.render( scene, camera );
 
-}
-
-
-
-/*
-Credit - https://codepen.io/boytchev/pen/ExdmvxE
-*/
-function createFakeBloom(baseGeometry, {
-  layers = 5,
-  maxScale = 2,
-  baseColor = 0xffaa00,
-  opacityFalloff = 0.2
-} = {}) {
-  const bloom = new THREE.Group();
-
-  for (let i = 0; i < 1; i += 1 / layers) {
-    const scale = 1 + i * (maxScale - 1);
-    const color =  baseColor;
-
-    const mat = new THREE.MeshStandardMaterial({
-      color,
-      transparent: true,
-      opacity: 1 - Math.pow(i, opacityFalloff),
-      emissive: color,
-      emissiveIntensity: 1
-    });
-
-    const glowMesh = new THREE.Mesh(baseGeometry.clone(), mat);
-    glowMesh.scale.setScalar(scale, scale, scale);
-    bloom.add(glowMesh);
-  }
-
-  return bloom;
 }
