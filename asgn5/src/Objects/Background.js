@@ -44,7 +44,7 @@ export class CityBackground{
         scene.add(test);
         scene.add(test2);
         this.s1 = scene;
-        this.s1.position.y -= 2;
+        this.s1.position.y -= 3;
         this.s2 = this.s1.clone();
         this.s2.position.z = 45;
         this.s3 = this.s1.clone();

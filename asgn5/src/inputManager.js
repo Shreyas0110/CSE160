@@ -51,3 +51,5 @@ class InputManager {
     }
   }
 }
+
+export const inputManager = new InputManager();

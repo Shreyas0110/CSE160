@@ -38,7 +38,7 @@ export class LoaderManager{
             }
 
             else if(name == 'player'){
-              
+              GAME.player.setMesh(model.gltf.scene);
             }
           });
       }

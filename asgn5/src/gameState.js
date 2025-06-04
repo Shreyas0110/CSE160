@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CityBackground } from './Objects/Background';
+import { Player } from './Objects/Player';
 
 export class GameState{
     constructor(now, root){
@@ -10,6 +11,9 @@ export class GameState{
         this.simVelocity = 2;
         this.loaded = false;
         this.paused = false;
+        this.player = new Player();
+        this.MAX_X = 2.8;
+        this.MAX_Z = 3.7;
     }
 
     addRoot(root){
@@ -29,6 +33,7 @@ export class GameState{
 
     update(){
         this.bg.animate();
+        this.player.animate();
     }
 }
 

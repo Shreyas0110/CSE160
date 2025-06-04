@@ -1,11 +1,15 @@
 
 
 export class GameObject{
-    constructor(initPosition, speed, velocityDirection, ){
-        
+    constructor(Mesh){
+        this.mesh = Mesh;
     }
 
     animate(){
 
+    }
+    
+    setMesh(Mesh){
+        this.mesh = Mesh;
     }
 }
