@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CityBackground } from './Objects/Background';
-import { Player } from './Objects/Player';
+import { Player, ListItem } from './Objects/Player';
+import {List, Item} from 'linked-list'
 
 export class GameState{
     constructor(now, root){
@@ -14,6 +15,38 @@ export class GameState{
         this.player = new Player();
         this.MAX_X = 2.8;
         this.MAX_Z = 3.7;
+        this.enemies = new List();
+    }
+
+    addEnemy(enemy){
+        this.enemies.append( new ListItem(enemy));
+        this.addToRoot(enemy.mesh);
+    }
+
+    animateEnemies(){
+        let n = this.enemies.head;
+    
+        while(n != null){
+            let b = n.value;
+            b.animate();
+            n = n.next;
+        }
+        
+    }
+
+    deleteEnemies(){
+        let n = this.enemies.head;
+    
+        while(n != null){
+            let b = n.value;
+            if (b.removed == true){
+                let t = n.next;
+                n.detach();
+                n = t;
+            } else{
+                n = n.next;
+            }
+        }
     }
 
     addRoot(root){
