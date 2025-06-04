@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sci-fi City
+* source:	https://sketchfab.com/3d-models/sci-fi-city-0ff5aed81b634278a161af8945140a6c
+* author:	onerockett (https://sketchfab.com/onerockett)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sci-fi City" (https://sketchfab.com/3d-models/sci-fi-city-0ff5aed81b634278a161af8945140a6c) by onerockett (https://sketchfab.com/onerockett) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

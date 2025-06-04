@@ -1,6 +1,6 @@
 
 
-class GameObject{
+export class GameObject{
     constructor(){
         
     }
