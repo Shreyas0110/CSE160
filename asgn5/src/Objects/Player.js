@@ -19,7 +19,7 @@ export class Player extends GameObject{
         this.moveSpeed = 1.3;
         this.animStatus = animStatus.FLAT;
         this.animStartTime = 0;
-        this.rotateSpeed = 20;
+        this.rotateSpeed = 30;
     }
 
     setMesh(Mesh){
@@ -30,48 +30,58 @@ export class Player extends GameObject{
         
     }
 
-    turn(moveX, dt){
-        let currentTime = GAME.currentTime;
-        if((moveX <= 0 && this.animStatus == animStatus.TURNING_RIGHT) || (this.animStatus == animStatus.RESET_RIGHT)){
-            //console.log('e');
-            this.animStatus = animStatus.RESET_RIGHT;
-            //this.animStartTime = currentTime;
-        }
-        else if((moveX >= 0 && this.animStatus == animStatus.TURNING_LEFT) || (this.animStatus == animStatus.RESET_LEFT)){
-            this.animStatus = animStatus.RESET_LEFT;
-            //this.animStartTime = currentTime;
-        }
-        else if(moveX < 0){
+    turn(moveX, dt) {
+    const rotSpeedRad = THREE.MathUtils.degToRad(this.rotateSpeed * dt);
+    const rotDeg = THREE.MathUtils.radToDeg(this.mesh.rotation.z);
+
+    // --- Handle state transitions ---
+    if (moveX < 0) {
+        if (this.animStatus !== animStatus.TURNING_LEFT) {
             this.animStatus = animStatus.TURNING_LEFT;
         }
-        else if(moveX > 0){
+    } else if (moveX > 0) {
+        if (this.animStatus !== animStatus.TURNING_RIGHT) {
             this.animStatus = animStatus.TURNING_RIGHT;
         }
-        else{
-            this.animStatus = animStatus.FLAT;
+    } else {
+        if (this.animStatus === animStatus.TURNING_LEFT) {
+            this.animStatus = animStatus.RESET_LEFT;
+        } else if (this.animStatus === animStatus.TURNING_RIGHT) {
+            this.animStatus = animStatus.RESET_RIGHT;
         }
-
-        let rot = THREE.MathUtils.radToDeg(this.mesh.rotation.z);
-
-        if ((this.animStatus == animStatus.TURNING_LEFT) || (this.animStatus == animStatus.RESET_RIGHT)) {
-            this.mesh.rotation.z += (THREE.MathUtils.degToRad(-this.rotateSpeed * dt)); // rotates positive: to the right
-        } 
-        else if ((this.animStatus == animStatus.TURNING_RIGHT) || (this.animStatus == animStatus.RESET_LEFT)) {
-            this.mesh.rotation.z += (THREE.MathUtils.degToRad(this.rotateSpeed * dt)); // rotates negative: to the left
-        } 
-        rot = THREE.MathUtils.radToDeg(this.mesh.rotation.z);
-        if(rot < 0.5 && rot > -0.5){
-            this.animStatus = animStatus.FLAT;
-            this.mesh.rotation.z = 0;
-        }
-        if(rot > 60){
-            this.mesh.rotation.z = THREE.MathUtils.degToRad(60);
-        }
-        if(rot < -60){
-            this.mesh.rotation.z = THREE.MathUtils.degToRad(-60);
-        }
-        console.log(rot, this.animStatus, moveX);
     }
+
+    // --- Apply rotation based on state ---
+    switch (this.animStatus) {
+        case animStatus.TURNING_LEFT:
+            this.mesh.rotation.z -= rotSpeedRad;
+            break;
+
+        case animStatus.TURNING_RIGHT:
+            this.mesh.rotation.z += rotSpeedRad;
+            break;
+
+        case animStatus.RESET_LEFT:
+        case animStatus.RESET_RIGHT:
+            // Smoothly interpolate back to 0 rotation
+            if (Math.abs(rotDeg) <= THREE.MathUtils.radToDeg(rotSpeedRad)) {
+                this.mesh.rotation.z = 0;
+                this.animStatus = animStatus.FLAT;
+            } else {
+                const direction = -Math.sign(this.mesh.rotation.z);
+                this.mesh.rotation.z += direction * rotSpeedRad;
+            }
+            break;
+    }
+
+    // --- Clamp rotation limits ---
+    const clampedDeg = THREE.MathUtils.radToDeg(this.mesh.rotation.z);
+    if (clampedDeg > 60) {
+        this.mesh.rotation.z = THREE.MathUtils.degToRad(60);
+    } else if (clampedDeg < -60) {
+        this.mesh.rotation.z = THREE.MathUtils.degToRad(-60);
+    }
+}
 
     animate(){
         let dt = GAME.deltaTime;
