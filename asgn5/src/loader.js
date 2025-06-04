@@ -20,6 +20,7 @@ export class LoaderManager{
       this.manager.onLoad = this.init;
       this.models = {
           city: {url: 'assets/sci-fi_city/scene.gltf'},
+          player: {url: 'assets/player_ship/scene.gltf'},
       }
       this.gltfLoader = new GLTFLoader(this.manager);
   }
@@ -34,6 +35,10 @@ export class LoaderManager{
             if(name == 'city'){
               let bg = GAME.bg;
               bg.initModels(model.gltf.scene);
+            }
+
+            else if(name == 'player'){
+              
             }
           });
       }
