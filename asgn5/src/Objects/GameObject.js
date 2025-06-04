@@ -1,7 +1,11 @@
 
 
 export class GameObject{
-    constructor(){
+    constructor(initPosition, speed, velocityDirection, ){
         
+    }
+
+    animate(){
+
     }
 }
