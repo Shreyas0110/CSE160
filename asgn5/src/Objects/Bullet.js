@@ -70,7 +70,7 @@ export class PlayerBullet extends BulletBase{
           if(this.color != b.color){
             damage *= 2;
           }
-          console.log(damage);
+          //console.log(damage);
           b.hp -= damage;
           if(b.hp <= 0){
             b.remove();
