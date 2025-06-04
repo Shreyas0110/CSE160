@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {LoadingManager} from 'three/addons/loaders/LoadingManager.js';
+import { GAME } from './gameState';
 
 function dumpObject(obj, lines = [], isLast = true, prefix = '') {
   const localPrefix = isLast ? '└─' : '├─';
@@ -14,34 +14,32 @@ function dumpObject(obj, lines = [], isLast = true, prefix = '') {
   return lines;
 }
 
-{
-  const gltfLoader = new GLTFLoader();
-  const url = 'assets/sci-fi_city/scene.gltf';
-  gltfLoader.load(url, (gltf) => {
-    const root = gltf.scene;
-    scene.add(root);
-    console.log(dumpObject(root).join('\n'));
-  });
-}
+export class LoaderManager{
+  constructor(){
+      this.manager = new THREE.LoadingManager();
+      this.manager.onLoad = this.init;
+      this.models = {
+          city: {url: 'assets/sci-fi_city/scene.gltf'},
+      }
+      this.gltfLoader = new GLTFLoader(this.manager);
+  }
 
-class LoaderManager{
-    constructor(){
-        this.manager = new THREE.LoadingManager();
-        this.manager.onLoad = this.init;
-        this.models = {
-            city: {url: 'assets/sci-fi_city/scene.gltf'},
-        }
-        this.gltfLoader = new GLTFLoader(manager);
-    }
+  startLoading(){
+      
+      for (const [name, model] of Object.entries(this.models)) {
+          this.gltfLoader.load(model.url, (gltf) => {
+            model.gltf = gltf;
+            //console.log(dumpObject(model.gltf.scene));
 
-    startLoading(){
-        
-        for (const model of Object.values(models)) {
-            gltfLoader.load(model.url, (gltf) => {
-                model.gltf = gltf;
-            });
-        }
-    }
+            if(name == 'city'){
+              let bg = GAME.bg;
+              bg.initModels(model.gltf.scene);
+            }
+          });
+      }
+  }
 
-    init(){}
+  init(){
+    GAME.loaded = true;
+  }
 }
