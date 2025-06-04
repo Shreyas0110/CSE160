@@ -7,8 +7,8 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GAME } from './gameState';
 import { LoaderManager } from './loader';
 
-const FIXED_WIDTH = 800;
-const FIXED_HEIGHT = 600;
+const FIXED_WIDTH = 600;
+const FIXED_HEIGHT = 800;
 const ASPECT_RATIO = FIXED_WIDTH /FIXED_HEIGHT;
 
 const scene = new THREE.Scene();
