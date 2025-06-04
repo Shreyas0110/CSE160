@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { GAME } from './gameState';
+import { initBullets } from './Objects/Bullet';
 
 function dumpObject(obj, lines = [], isLast = true, prefix = '') {
   const localPrefix = isLast ? '└─' : '├─';
@@ -45,6 +46,7 @@ export class LoaderManager{
   }
 
   init(){
+    initBullets();
     GAME.loaded = true;
   }
 }

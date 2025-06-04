@@ -2,6 +2,9 @@ import * as THREE from 'three'
 import { GAME } from '../gameState'
 import { GameObject } from './GameObject'
 import { inputManager } from '../inputManager';
+import { SphereCollider } from '../collisions';
+import { PlayerBullet } from './Bullet';
+import {List, Item} from 'linked-list'
 
 const animStatus = Object.freeze({
     FLAT: 1,
@@ -12,6 +15,13 @@ const animStatus = Object.freeze({
     RESET_RIGHT: 6
    });
 
+class ListItem extends Item{
+    constructor(value){
+        super();
+        this.value = value;
+    }
+}
+
 export class Player extends GameObject{
     
     constructor(){
@@ -20,6 +30,13 @@ export class Player extends GameObject{
         this.animStatus = animStatus.FLAT;
         this.animStartTime = 0;
         this.rotateSpeed = 30;
+        this.firingStartTime = 0;
+        this.firingCurrentTime = 0;
+        this.firingTimeout = false;
+        this.firingTimeoutLength = 0.1 * 1000;
+        this.color = 'blue';
+        this.bulletList = new List();
+        this.bulletVelocityVec = new THREE.Vector2(0, -3);
     }
 
     setMesh(Mesh){
@@ -27,7 +44,7 @@ export class Player extends GameObject{
         this.mesh.scale.set(0.05, 0.05, 0.05);
         this.mesh.rotateY(THREE.MathUtils.degToRad(180));
         GAME.addToRoot(this.mesh);
-        
+        this.collider = new SphereCollider(this.mesh.position, 0.02);
     }
 
     turn(moveX, dt) {
@@ -76,18 +93,57 @@ export class Player extends GameObject{
 
     // --- Clamp rotation limits ---
     const clampedDeg = THREE.MathUtils.radToDeg(this.mesh.rotation.z);
-    if (clampedDeg > 60) {
-        this.mesh.rotation.z = THREE.MathUtils.degToRad(60);
-    } else if (clampedDeg < -60) {
-        this.mesh.rotation.z = THREE.MathUtils.degToRad(-60);
+    if (clampedDeg > 40) {
+        this.mesh.rotation.z = THREE.MathUtils.degToRad(40);
+    } else if (clampedDeg < -40) {
+        this.mesh.rotation.z = THREE.MathUtils.degToRad(-40);
     }
 }
+
+    fire(){
+        if(this.firingTimeout == true && GAME.currentTime - this.firingStartTime > this.firingTimeoutLength){
+            this.firingTimeout = false;
+        }
+        if(this.firingTimeout == false){
+            let b1 = new PlayerBullet('blue', this.mesh.position, 1);
+            b1.setVelocity(this.bulletVelocityVec);
+            GAME.addToRoot(b1.mesh);
+
+            this.bulletList.append(new ListItem(b1));
+
+            b1 = new PlayerBullet('blue', this.mesh.position, -1);
+            b1.setVelocity(this.bulletVelocityVec);
+            GAME.addToRoot(b1.mesh);
+
+            this.bulletList.append(new ListItem(b1));
+
+            this.firingTimeout = true;
+            this.firingStartTime = GAME.currentTime;
+        }
+    }
+
+    drawBullets(){
+        let n = this.bulletList.head;
+    
+        while(n != null){
+            let b = n.value;
+            b.animate();
+            if (b.removed == true){
+                let t = n.next;
+                n.detach();
+                n = t;
+            } else{
+                n = n.next;
+            }
+        }
+    }
 
     animate(){
         let dt = GAME.deltaTime;
         let ds = this.moveSpeed * dt;
         let moveX = 0;
         let moveZ = 0;
+        let firing = false;
         if(inputManager.keys['left'].down == true){
             moveX -= 1;
         }
@@ -99,6 +155,12 @@ export class Player extends GameObject{
         }
         if(inputManager.keys['down'].down == true){
             moveZ += 1;
+        }
+        if(inputManager.keys['z'].down == true){
+            firing = true;
+        }
+        if(firing == true){
+            this.fire();
         }
         this.mesh.position.x += ds * moveX;
         this.turn(moveX, dt);
@@ -114,6 +176,9 @@ export class Player extends GameObject{
             this.mesh.position.z = -1 * GAME.MAX_Z;
         } else if (this.mesh.position.z > GAME.MAX_Z){
             this.mesh.position.z = GAME.MAX_Z;
+        }
+        if(this.bulletList.size > 0){
+            this.drawBullets();
         }
     }
 }

@@ -3,6 +3,7 @@
 export class GameObject{
     constructor(Mesh){
         this.mesh = Mesh;
+        this.removed = false;
     }
 
     animate(){
