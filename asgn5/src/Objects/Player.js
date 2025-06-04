@@ -15,12 +15,15 @@ const animStatus = Object.freeze({
     RESET_RIGHT: 6
    });
 
-class ListItem extends Item{
+export class ListItem extends Item{
     constructor(value){
         super();
         this.value = value;
     }
 }
+
+const blue = new THREE.Color(0x0096FF);
+const orange = new THREE.Color(0x8B4000);
 
 export class Player extends GameObject{
     
@@ -37,17 +40,24 @@ export class Player extends GameObject{
         this.color = 'blue';
         this.bulletList = new List();
         this.bulletVelocityVec = new THREE.Vector2(0, -3);
+        this.ctrl = false;
+        this.light = new THREE.PointLight(blue, 2);
     }
 
     setMesh(Mesh){
         super.setMesh(Mesh);
         this.mesh.scale.set(0.05, 0.05, 0.05);
         this.mesh.rotateY(THREE.MathUtils.degToRad(180));
+        //this.mesh.rotateZ(THREE.MathUtils.degToRad(180));
+        //console.log(THREE.MathUtils.radToDeg(this.mesh.clone().rotation.z));
         GAME.addToRoot(this.mesh);
+        this.mesh.add(this.light);
+        this.light.position.y += 5;
         this.collider = new SphereCollider(this.mesh.position, 0.02);
     }
 
     turn(moveX, dt) {
+        this.mesh.rotation.z += Math.PI;
     const rotSpeedRad = THREE.MathUtils.degToRad(this.rotateSpeed * dt);
     const rotDeg = THREE.MathUtils.radToDeg(this.mesh.rotation.z);
 
@@ -98,6 +108,7 @@ export class Player extends GameObject{
     } else if (clampedDeg < -40) {
         this.mesh.rotation.z = THREE.MathUtils.degToRad(-40);
     }
+    this.mesh.rotation.z -= Math.PI;
 }
 
     fire(){
@@ -105,13 +116,13 @@ export class Player extends GameObject{
             this.firingTimeout = false;
         }
         if(this.firingTimeout == false){
-            let b1 = new PlayerBullet('blue', this.mesh.position, 1);
+            let b1 = new PlayerBullet(this.color, this.mesh.position, 1);
             b1.setVelocity(this.bulletVelocityVec);
             GAME.addToRoot(b1.mesh);
 
             this.bulletList.append(new ListItem(b1));
 
-            b1 = new PlayerBullet('blue', this.mesh.position, -1);
+            b1 = new PlayerBullet(this.color, this.mesh.position, -1);
             b1.setVelocity(this.bulletVelocityVec);
             GAME.addToRoot(b1.mesh);
 
@@ -133,6 +144,9 @@ export class Player extends GameObject{
                 n.detach();
                 n = t;
             } else{
+                if(GAME.enemies.size > 0){
+                    b.collide();
+                }
                 n = n.next;
             }
         }
@@ -158,6 +172,19 @@ export class Player extends GameObject{
         }
         if(inputManager.keys['z'].down == true){
             firing = true;
+        }
+        if(inputManager.keys['ctrl'].down == true && !this.ctrl){
+            if(this.color == 'blue'){
+                this.color = 'orange';
+                this.light.color = orange;
+            } else{
+                this.color = 'blue';
+                this.light.color = blue;
+            }
+            this.ctrl = true;
+        } else{
+            if(inputManager.keys['ctrl'].down != true)
+                this.ctrl = false;
         }
         if(firing == true){
             this.fire();

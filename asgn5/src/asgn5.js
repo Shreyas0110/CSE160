@@ -18,10 +18,10 @@ scene.add(new THREE.AmbientLight(0xffffff, 0.2));
 let dirlight = new THREE.DirectionalLight(0xffffff, 3);
 dirlight.position.x = 1;
 scene.add(dirlight);
-let pointlight = new THREE.PointLight(0xff0000, 10);
-pointlight.position.x = 1;
-pointlight.position.y = 3;
-scene.add(pointlight);
+//let pointlight = new THREE.PointLight(0xff0000, 10);
+//pointlight.position.x = 1;
+//pointlight.position.y = 3;
+//scene.add(pointlight);
 
 const renderer = new THREE.WebGLRenderer({antialias: false});
 renderer.setSize(FIXED_WIDTH, FIXED_HEIGHT, false);
