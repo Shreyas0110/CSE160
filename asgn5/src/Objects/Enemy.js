@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { GAME } from '../gameState'
 import { GameObject } from './GameObject'
-import { SphereCollider, EllipseCollider, BoxCollider } from '../collisions';
+import { checkCollision } from '../collisions';
 
 let enemyBlueShip;
 let enemyOrangeShip;
@@ -48,6 +48,14 @@ export class EnemyBase extends GameObject{
         this.velocity = velocity;
     }
 
+    collideWithPlayer(){
+        if(checkCollision(this.collider, GAME.player.collider) == true){
+            //GAME.player.remove();
+            console.log("Your Score: ", GAME.score);
+            GAME.paused = true;
+        }
+    }
+
     animate(){
         let dt = GAME.deltaTime;
         this.mesh.position.z += dt * this.downSpeed;
@@ -76,21 +84,27 @@ export class EnemyBase extends GameObject{
         } else{
             this.mesh.position.x += dt * this.latSpeed;
         }
+        this.collideWithPlayer();
     }
 }
 
 var lastTime = 0;
 let interval = 2 * 1000;
+let nextInterval = 0;
 
 export function GenerateEnemies(){
-    let dt = GAME.deltaTime;
     let ct = GAME.currentTime;
-    if(ct - lastTime > interval){
+    if(ct - lastTime > nextInterval){
         let color = 'blue';
         let choice = Math.random();
         if(choice < 0.5)
             color = 'red';
-        GAME.addEnemy(new EnemyBase(color, new THREE.Vector3(0, 0, -4), null, 10));
+        choice = Math.random();
+        choice -= 0.5;
+        choice *= 4;
+        GAME.addEnemy(new EnemyBase(color, new THREE.Vector3(choice, 0, -4), null, 30));
+        choice = Math.random();
         lastTime = ct;
+        nextInterval = choice * interval + 0.2;
     }
 }

@@ -17,6 +17,7 @@ export class GameState{
         this.MAX_X = 2.8;
         this.MAX_Z = 3.7;
         this.enemies = new List();
+        this.score = 0;
     }
 
     addEnemy(enemy){
