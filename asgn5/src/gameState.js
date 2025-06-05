@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CityBackground } from './Objects/Background';
 import { Player, ListItem } from './Objects/Player';
 import {List, Item} from 'linked-list'
+import { GenerateEnemies } from './Objects/Enemy';
 
 export class GameState{
     constructor(now, root){
@@ -39,6 +40,9 @@ export class GameState{
     
         while(n != null){
             let b = n.value;
+            if(b.mesh.position.z > this.MAX_Z+0.3){
+                b.remove();
+            }
             if (b.removed == true){
                 let t = n.next;
                 n.detach();
@@ -65,8 +69,11 @@ export class GameState{
     }
 
     update(){
+        GenerateEnemies();
         this.bg.animate();
         this.player.animate();
+        this.animateEnemies();
+        this.deleteEnemies();
     }
 }
 
