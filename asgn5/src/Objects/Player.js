@@ -50,6 +50,7 @@ export class Player extends GameObject{
         this.mesh.rotateY(THREE.MathUtils.degToRad(180));
         //this.mesh.rotateZ(THREE.MathUtils.degToRad(180));
         //console.log(THREE.MathUtils.radToDeg(this.mesh.clone().rotation.z));
+        this.mesh.position.z += 2;
         GAME.addToRoot(this.mesh);
         this.mesh.add(this.light);
         this.light.position.y += 5;
